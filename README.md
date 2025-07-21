@@ -1,2 +1,6 @@
 # live-music-projection
-Music visualization for live performances
+
+Browser app for visualization of live music performances.
+
+[Demo](https://patztablook22.github.io/live-music-projection/).
+
