@@ -9,5 +9,5 @@ Browser app for visualization of live music performances. [Demo](https://patztab
 - Toggle fullscreen: `p`,
 - Toggle edit mode: `i`, `/`,
 - (edit mode only) Add text element: `a`,
-- (edit mode only) Cycle transformation: `s`, `j`,
+- (edit mode only) Toggle mouse wheel transformation: `s`, `j`,
 - (edit mode only) Delete text element: `d`, `delete`, `backspace`.
