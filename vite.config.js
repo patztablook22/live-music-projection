@@ -9,4 +9,6 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ["onnxruntime-web"],
     },
+
+    base: '/live-music-projection/'
 });
