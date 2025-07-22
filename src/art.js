@@ -1,33 +1,18 @@
-a.setBins(8)
-
+import { RnnWrapper } from './RnnWrapper.js';
+import { streamRnn } from './streamRnn.js';
 
 const peak = () => Math.max(...a.fft);
 
-const smoothPeak = new EnvelopeFollower(peak, {
-    attack: 0.9,
-    decay: 0.9,
-    sustain: 0.5,
-    release: 0.95,
-    interval: 30
-});
+const rnn = new RnnWrapper('models/ewa.onnx');
+const smoothPeak = streamRnn(rnn, () => ({x: [peak()]}), y => y.output[0]);
 
-const heat = new EnvelopeFollower(peak, {
-    attack: 0.05,
-    decay: 0.99,
-    sustain: 0.7,
-    release: 0.995,
-    interval: 100
-});
+export default [
 
-
-
-const arts = [
     () => {
-        return shape([4,5,6].fast(0.1),0.01,0.5)
-            .color(0.2,0.4,0.3)
-            .modulate(voronoi(15, () => 0 + 1 * smoothPeak.value,10)).modulate(noise(10))
-            .colorama(0.9)
-            .color(0.2, 0.4, 0.3)
+        const metric = peak;
+
+        return osc(7, 0.1).mask(shape(2, 0.5, () => metric() * 0.1))
+                          .mask(shape(4, 0.8, () => metric() * 0.3));
     },
 
     () => {

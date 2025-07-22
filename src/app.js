@@ -1,10 +1,13 @@
+import Hydra from 'hydra-synth';
+import visuals from './art.js'
+
 const keyFullscreen = ['p'];
 const keyEditMode = ['i', '/'];
 const keyAddTextElement = ['a'];
 const keyNextTransformation = ['s', 'j'];
 const keyDelete = ['d', 'delete', 'backspace']
 
-const defaultArt = 0;
+const defaultVisual = 0;
 
 const controlValues = {
     textElementBorder: false,
@@ -12,7 +15,7 @@ const controlValues = {
 };
 
 const canvasApp = document.getElementById('text');
-const canvasArt = document.getElementById('art');
+const canvasvisual = document.getElementById('visual');
 const editPanel = document.getElementById('edit-panel');
 const editPanelHeader = document.getElementById('edit-panel-header');
 
@@ -71,34 +74,35 @@ let currentTransformation = 0;
 let isEditMode = false;
 
 const hydra = new Hydra({
-    canvas: canvasArt,
+    canvas: canvasvisual,
     detectAudio: true,
     enableStreamCapture: false
 });
 
-let artIndex = 0;
-let artBlendAmount = 0;
-let artTransitioning = false;
+let visualIndex = 0;
+let visualBlendAmount = 0;
+let visualTransitioning = false;
 
-const renderArt = (art) => {
+const renderVisual = (visual) => {
+    a.setBins(8);
     speed = 1;
-    art().out(o3);
+    visual().out(o3);
 
-    artBlendAmount = 0;
-    artTransitioning = true;
+    visualBlendAmount = 0;
+    visualTransitioning = true;
 }
 
-const noArt = () => renderArt(() => solid(0, 0, 0, 1));
+const disableVisual = () => renderVisual(() => solid(0, 0, 0, 1));
 
 setInterval(() => {
-    if (artTransitioning) {
-        artBlendAmount += 0.001;
-        if (artBlendAmount >= 1) {
-            artBlendAmount = 1;
-            artTransitioning = false;
+    if (visualTransitioning) {
+        visualBlendAmount += 0.001;
+        if (visualBlendAmount >= 1) {
+            visualBlendAmount = 1;
+            visualTransitioning = false;
         }
     }
-    src(o3).blend(src(o0), 1 - artBlendAmount).out();
+    src(o3).blend(src(o0), 1 - visualBlendAmount).out();
 }, 30);
 
 function updateResolution() {
@@ -110,8 +114,8 @@ updateResolution();
 window.addEventListener('resize', updateResolution);
 
 window.addEventListener('load', () => {
-    if (!isNaN(defaultArt) && defaultArt >= 0 && defaultArt < arts.length)
-        renderArt(arts[defaultArt]);
+    if (!isNaN(defaultVisual) && defaultVisual >= 0 && defaultVisual < visuals.length)
+        renderVisual(visuals[defaultVisual]);
 });
 
 let textElementHistory = [];
@@ -121,8 +125,8 @@ document.body.addEventListener('keydown', (e) => {
     const activeTag = document.activeElement.tagName.toLowerCase();
     if (activeTag === 'textarea') return;
 
-    key = e.key.toLowerCase();
-    num = parseInt(key);
+    let key = e.key.toLowerCase();
+    let num = parseInt(key);
 
     if (keyFullscreen.includes(key))
         toggleFullscreen();
@@ -132,9 +136,9 @@ document.body.addEventListener('keydown', (e) => {
 
     if (!isNaN(num)) {
         if (num == 0)
-            noArt();
-        else if (num > 0 && num <= arts.length)
-            renderArt(arts[num - 1]);
+            disableVisual();
+        else if (num > 0 && num <= visuals.length)
+            renderVisual(visuals[num - 1]);
     }
 
     if (!isEditMode) return;
@@ -223,7 +227,7 @@ function addTextElement() {
   `;
 
     let isDragging = false;
-    let startX, startY, initialLeft, initialTop;
+    let stvisualX, stvisualY, initialLeft, initialTop;
     let rotate = 0;
     let scale = 1;
     let opacity = 1;
@@ -233,8 +237,8 @@ function addTextElement() {
         if (!isEditMode) return;
 
         isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
+        stvisualX = e.clientX;
+        stvisualY = e.clientY;
         initialLeft = parseFloat(el.style.left);
         initialTop = parseFloat(el.style.top);
         selectTextElement(el);
@@ -244,8 +248,8 @@ function addTextElement() {
 
     document.addEventListener('mousemove', (e) => {
         if (!isEditMode || !isDragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
+        const dx = e.clientX - stvisualX;
+        const dy = e.clientY - stvisualY;
         el.style.left = `${initialLeft + dx}px`;
         el.style.top = `${initialTop + dy}px`;
     });

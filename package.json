@@ -1,0 +1,28 @@
+{
+    "name": "live-music-projection",
+    "version": "1.0.0",
+    "description": "Music visualization for live performances.",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/patztablook22/live-music-projection.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/patztablook22/live-music-projection/issues"
+    },
+    "homepage": "https://github.com/patztablook22/live-music-projection#readme",
+    "dependencies": {
+        "hydra-synth": "^1.3.29",
+        "onnxruntime-web": "^1.22.0"
+    },
+    "devDependencies": {
+        "parcel": "^2.15.4",
+        "vite": "^7.0.5"
+    }
+}
