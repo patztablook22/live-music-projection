@@ -15,6 +15,19 @@ body {
     pointer-events: none;
 }
 
+#metrics-monitor {
+    display: none;
+    position: fixed;
+    top: 1em;
+    left: 1em;
+    color: red;
+    font-family: monospace;
+}
+
+.edit-mode #metrics-monitor {
+    display: block;
+}
+
 #text {
     position: fixed;
     top: 0;

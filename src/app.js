@@ -1,13 +1,14 @@
 import Hydra from 'hydra-synth';
-import visuals from './art.js'
+import { metrics, visuals } from './art.js'
 
 const keyFullscreen = ['p'];
 const keyEditMode = ['i', '/'];
 const keyAddTextElement = ['a'];
 const keyNextTransformation = ['s', 'j'];
 const keyDelete = ['d', 'delete', 'backspace']
+const isEditModeByDefault = true;
 
-const defaultVisual = 0;
+const defaultVisual = 1;
 
 const controlValues = {
     textElementBorder: false,
@@ -18,6 +19,7 @@ const canvasApp = document.getElementById('text');
 const canvasvisual = document.getElementById('visual');
 const editPanel = document.getElementById('edit-panel');
 const editPanelHeader = document.getElementById('edit-panel-header');
+const metricsMonitor = document.getElementById('metrics-monitor');
 
 let isDraggingEditPanel = false;
 let offsetEditPanel = { x: 0, y: 0 }
@@ -82,28 +84,23 @@ const hydra = new Hydra({
 let visualIndex = 0;
 let visualBlendAmount = 0;
 let visualTransitioning = false;
+let currentVisualInstance = null;
 
-const renderVisual = (visual) => {
-    a.setBins(8);
+const runVisual = (visualClass) => {
+    
+    a.setBins(24);
+    a.setCutoff(1);
+    a.setSmooth(0);
     speed = 1;
-    visual().out(o3);
 
-    visualBlendAmount = 0;
-    visualTransitioning = true;
+    if (currentVisualInstance !== null)
+        currentVisualInstance.running = false;
+    
+    let visual = new visualClass();
+    visual.running = true;
+    visual.run();
+    currentVisualInstance = visual
 }
-
-const disableVisual = () => renderVisual(() => solid(0, 0, 0, 1));
-
-setInterval(() => {
-    if (visualTransitioning) {
-        visualBlendAmount += 0.001;
-        if (visualBlendAmount >= 1) {
-            visualBlendAmount = 1;
-            visualTransitioning = false;
-        }
-    }
-    src(o3).blend(src(o0), 1 - visualBlendAmount).out();
-}, 30);
 
 function updateResolution() {
     const scale = window.devicePixelRatio || 1;
@@ -115,7 +112,7 @@ window.addEventListener('resize', updateResolution);
 
 window.addEventListener('load', () => {
     if (!isNaN(defaultVisual) && defaultVisual >= 0 && defaultVisual < visuals.length)
-        renderVisual(visuals[defaultVisual]);
+        runVisual(visuals[defaultVisual]);
 });
 
 let textElementHistory = [];
@@ -135,10 +132,8 @@ document.body.addEventListener('keydown', (e) => {
         toggleEditMode();
 
     if (!isNaN(num)) {
-        if (num == 0)
-            disableVisual();
-        else if (num > 0 && num <= visuals.length)
-            renderVisual(visuals[num - 1]);
+        if (num >= 0 && num < visuals.length)
+            runVisual(visuals[num]);
     }
 
     if (!isEditMode) return;
@@ -317,3 +312,20 @@ document.body.addEventListener('mousedown', () => {
     if (!isEditMode) return;
     selectTextElement(null);
 });
+
+
+function updateMetrics() {
+    metricsMonitor.innerHTML = '';
+
+    for (const [name, metricFn] of Object.entries(metrics)) {
+        const div = document.createElement("div");
+        let value = metricFn();
+        if (typeof value === 'number') value = value.toFixed(3);
+        div.textContent = `${name}: ${value}`;
+        metricsMonitor.appendChild(div);
+    }
+}
+
+updateMetrics();
+setInterval(updateMetrics, 100);
+if (isEditModeByDefault) toggleEditMode();

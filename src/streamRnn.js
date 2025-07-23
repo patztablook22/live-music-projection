@@ -15,6 +15,7 @@ export function streamRnn(rnn, inputFn, outputFn, samplingRate = 40) {
             const { outputs, nextState } = await rnn.call(inputs, state);
             state = nextState;
             lastOutput = outputFn(outputs);
+            //console.log(lastOutput);
         } catch (e) {
             console.error('streamRnn step error:', e);
         }
