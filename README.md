@@ -2,7 +2,7 @@
 
 Browser app for visualization of live music performances. [Demo](https://patztablook22.github.io/live-music-projection/).
 
-It uses the [Hydra](https://hydra.ojack.xyz/) visual synthesizer with live parameters given by custom RNNs written [PyTorch](https://pytorch.org/).
+It uses the [Hydra](https://hydra.ojack.xyz/) visual synthesizer with live parameters given by custom RNNs written in [PyTorch](https://pytorch.org/).
 
 ## Controls
 
