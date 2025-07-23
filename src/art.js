@@ -50,19 +50,19 @@ class ChillVisual extends Visual {
             .add(
                 osc(28,0.1,0).thresh([.3,.7].fast(.75),0).rotate(3.14/4)
                 .color(1,0,0)
-                .modulateScale( osc(() => smoothPeak(),-.01,0).thresh([.3,.7].fast(.75),0) )
+                .modulateScale( osc(() => 1,-.01,0).thresh([.3,.7].fast(.75),0) )
             )
             .diff(
-                osc(28,.1,0).thresh([.3,.7].fast(.5),0).rotate(3.14/2)
+                osc(28,.1,0).thresh(0.5,0).rotate(3.14/3)
                 .color(1,0,1)
-                .modulateScale( osc(64,-.015,0).thresh([.3,.7].fast(.5),0) )
+                .modulateScale( osc(64,-.015,0).thresh(0.7,0) )
             )
-            .modulateRotate( osc(54,-.005,0).thresh([.3,.7].fast(.25),0) )
-            .modulateScale( osc(44,-.020,0).thresh([.3,.7].fast(.25),0) )
+            .modulateRotate( osc(54,-.005,0).thresh(.3,0) )
+            .modulateScale( osc(44,-.020,0).thresh(0.7,0) )
             .colorama( ()=>Math.sin(time/27)*.01222+9.89)
             .scale(() => smoothPeak() * 0.1 + 2.122)
-            .brightness(() => -0.2 * playing())
-            .contrast(() => 1 + playing());
+            .brightness(() => -0.3 * playing())
+            .contrast(() => 1 + 2 * playing());
 
         vis.out();
 
@@ -102,15 +102,17 @@ class GridVisual extends Visual {
         function r(min=0,max=1) { return Math.random()*(max-min)+min; }
 
         solid(1,1,1)
-            .diff(shape(4,0.45,.09).repeat(20,10))
-            .modulateScale(osc(2).rotate(r(-.5,.5)),.52)
+            .diff(shape(4,0.85,.09).repeat(20,10))
+            .modulateScale(osc(2).rotate(r(-.5,.5)),() => .22 + 0.3 * playing())
+                .luma(() => .01 + 0.5 * momentum(), () => momentum() * 0.5 + .1)
             .add(
                 src(o0).scale(() => 0.97 - 0.1 * momentum()).rotate(.012*(Math.round(-2)))
-                .color(r(),r(),r())
+                .color(0.5,1,0.5)
                 .modulateRotate(o0,0)
                 .brightness(.15)
                 ,momentum)
-            .brightness(() => -0.5 + momentum())
+            .brightness(() => -0.5 + 0.2 * momentum())
+            .brightness(() => -0.3 * (1 - playing()))
             .out()
     }
 }
@@ -122,8 +124,8 @@ class StarsVisual extends Visual {
             .thresh(.7)
             .modulateScale(osc(1).modulateRotate(o0,.04))
             .diff(src(o0).rotate(-.0012).scrollY(0,[-1/199800].fast(0.7)))
-            .brightness([-.02,-.17].smooth().fast(.5))
-            .scale(() => 1 + 0.05 * momentum())
+            .brightness(() => -0.17 + 0.15 * smoothPeak())
+            .scale(() => 1 + 0.05 *  momentum())
             .brightness(() => -0.5 + 0.5 * playing())
             .out()
     }
@@ -131,10 +133,10 @@ class StarsVisual extends Visual {
 
 export const visuals = [
     NoVisual, 
+    ChillVisual, 
     GridVisual,
     FloatingShapesVisual,
     StarsVisual,
-    ChillVisual, 
     RectangleVisual,
 ]
 
