@@ -89,7 +89,7 @@ let currentVisualInstance = null;
 const runVisual = (visualClass) => {
     
     a.setBins(24);
-    a.setCutoff(1);
+    a.setCutoff(1.5);
     a.setSmooth(0);
     speed = 1;
 
